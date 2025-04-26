@@ -1,14 +1,13 @@
 import telebot
-    
-# Инициализация бота с использованием его токена
-bot = telebot.TeleBot("7692841918:AAE6NQ2HidheurNs0f0ALcM-AaiVPBVdcRU")
+import random
+from telebot.types import ReactionTypeEmoji
 
-# Обработчик команды '/start' и '/hello'
+bot = telebot.TeleBot("СВОЙ ТОКЕН")
+
 @bot.message_handler(commands=['start', 'hello'])
 def send_welcome(message):
-    bot.reply_to(message, f'Привет! Я бот {bot.get_me().first_name}!')
+    bot.reply_to(message, f'Привет! Я бот {bot.get_me().first_name}! Напиши команду /help и начни работу со мной!')
 
-# Обработчик команды '/heh'
 @bot.message_handler(commands=['heh'])
 def send_heh(message):
     count_heh = int(message.text.split()[1]) if len(message.text.split()) > 1 else 5
@@ -51,7 +50,10 @@ def calc(message):
     else:
         result = 'Ошибка!!  Вы не дописали команду!!!!'
         bot.reply_to(message, f'{result}')
-            
 
-# Запуск бота
+@bot.message_handler(commands=['help'])
+def send_welcome(message):
+    bot.reply_to(message, 'Команды для работы со мной: /help - показывает все функции бота, /calc summa (number) - если написать эту команду и вместо скобок число, то бот сложит все числа от введённого до нуля, /calc (число) (арифметиический знак) (число) - если написать эту команду и вместо скобок (число) поставить числа, а вместо (арифметиический знак) знак сложения/вычитания/умножения/деления, то бот как калькулятор решит пример, /heh или /heh (число) - если ввести без числа, то бот 5 раз выведет he, если с числом то выведет he определённое кол-во раз')
+
+
 bot.polling()
