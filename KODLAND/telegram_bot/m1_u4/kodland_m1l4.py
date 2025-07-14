@@ -3,7 +3,7 @@ import random
 import os
 
 # Инициализация бота с использованием его токена
-bot = telebot.TeleBot("7692841918:AAE6NQ2HidheurNs0f0ALcM-AaiVPBVdcRU")
+bot = telebot.TeleBot("Bot_Token")
 memes_prog = os.listdir('./images_prog')
 memes_animal = os.listdir('./images_animal')
 # Обработчик команды '/start' и '/hello'
