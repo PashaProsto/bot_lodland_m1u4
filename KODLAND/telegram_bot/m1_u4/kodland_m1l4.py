@@ -23,16 +23,11 @@ def calc(message):
     if len(words) > 2:
         if words[1] == 'summa' or words[1] == 'сумма':
             number = int(words[2])
-            summa = 0
-            if number < 0:
-                for i in range (0, number - 1, -1):
-                    summa += 1
-            elif number > 0:
-                for i in range (0, number + 1):
-                    summa += i    
+            if number >= 0:
+                summa = number * (number + 1) // 2
             else:
-                summa = 0
-            bot.reply_to(message, f'Сумма всех чисел от {number} до 0: {summa}')
+                summa = number * (number - 1) // 2 * -1
+            bot.reply_to(message, f'Сумма всех чисел от 0 до {number}: {summa}')
         else:
             if len(words) == 4:
                 number1 = int(words[1])
@@ -59,19 +54,19 @@ def calc(message):
 def send_help(message):
     bot.reply_to(message, ''' Команды для работы со мной: /help - показывает все функции бота,
  /calc summa (number) - если написать эту команду и вместо скобок число, то бот сложит все числа от введённого до нуля,
- /calc (число) (арифметиический знак) (число) - если написать эту команду и вместо скобок (число) поставить числа, а вместо (арифметиический знак) знак сложения/вычитания/умножения/деления, то бот как калькулятор решит пример,
+ /calc (число) (арифметический знак) (число) - если написать эту команду и вместо скобок (число) поставить числа, а вместо (арифметиический знак) знак сложения/вычитания/умножения/деления, то бот как калькулятор решит пример,
  /heh или /heh (число) - если ввести без числа, то бот 5 раз выведет he, если с числом то выведет he определённое кол-во раз,
  /mem или /mem (число) - если ввести без числа, то вм выдастся рандомный мем, если с числом, то определённый мем под числом, которое вы написали (эту же функцию делает /animals),
  /ecology - выдаст вам инстуркцию по использованию команды''')
 
 @bot.message_handler(commands=['mem'])
 def mem(message):
-    global memes_prog
+    memes_prog = os.listdir('./images_prog')
     meme = message.text.split()
     if len(meme) > 1:
         number_name = int(meme[1]) - 1
-        if 0 <= number_name:
-            with open(f'images_prog/{memes_prog[1]}', 'rb') as f:
+        if 0 <= number_name < len(memes_prog):
+            with open(f'images_prog/{memes_prog[number_name]}', 'rb') as f:
                 return bot.send_photo(message.chat.id, f)
         else:
             return bot.reply_to(message, f'Мема с таким номером нету')
@@ -88,9 +83,9 @@ def mem(message):
     global memes_animal
     meme = message.text.split()
     if len(meme) > 1:
-        number_name = meme[1]
-        if 0 <= number_name:
-            with open(f'images_animal/{memes_animal[1]}', 'rb') as f:
+        number_name = int(meme[1]) - 1
+        if 0 <= number_name < len(memes_animal):
+            with open(f'images_animal/{memes_animal[number_name]}', 'rb') as f:
                 return bot.send_photo(message.chat.id, f)
         else:
             return bot.reply_to(message, f'Мема с таким номером нету')
@@ -138,7 +133,7 @@ def ecology(message):
 
     podelka = random.choice(podelki)
     info = random.choice(informations)
-    if len(eco) > 1:
+    if len(eco) >= 2:
         if eco[1] == 'заработок':
             bot.reply_to(message, f''' Хотите узнать, как зарабатывать на экологии? Вот интересный варианты для поделок из ненужных материалов:
  {podelka}
@@ -152,5 +147,5 @@ def ecology(message):
  Если вы хотите узнать, как заработать на боте, допишите к команде "заработок".
  Если хотите узнать что-то новое, введите "информация"''')
 
-
-bot.polling()
+bot.remove_webhook()
+bot.polling(none_stop=True)
